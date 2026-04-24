@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "cavemanov",
+  "description": "Ультра-сжатый режим общения на русском для Claude Code. Сокращает ~65-75% токенов при сохранении полной технической точности.",
+  "owner": {
+    "name": "zzvllvzz",
+    "url": "https://github.com/zzvllvzz"
+  },
+  "plugins": [
+    {
+      "name": "cavemanov",
+      "description": "Говори как пещерный человек на русском. Сокращай ~65-75% токенов. Сохраняй всю техническую точность.",
+      "source": "./",
+      "category": "productivity"
+    }
+  ]
+}
