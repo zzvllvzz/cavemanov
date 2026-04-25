@@ -1,5 +1,13 @@
 # cavemanov
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin-blueviolet)](https://www.anthropic.com/claude-code)
+[![Language: Russian](https://img.shields.io/badge/lang-русский-red)](#)
+[![Token saving](https://img.shields.io/badge/токены-−65--90%25-brightgreen)](#пример)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue)](.claude-plugin/plugin.json)
+
+**Теги:** `claude-code` · `claude-code-plugin` · `russian` · `русский` · `compression` · `сжатие` · `tokens` · `токены` · `caveman` · `пещерный` · `productivity` · `output-style` · `terse`
+
 **Ультра-сжатый режим общения на русском для Claude Code.** Говори как умный пещерный человек. Сокращай вывод на 65–75% без потери технической точности.
 
 Порт проекта [caveman](https://github.com/JuliusBrussee/caveman) от Julius Brussee на русский язык.
@@ -20,22 +28,125 @@ Cavemanov — это плагин для [Claude Code](https://www.anthropic.com
 
 ---
 
-## Быстрый старт
+## Установка
 
-### Вариант 1: через Claude Code marketplace (когда будет опубликовано)
+Плагин — стандартный Claude Code marketplace. Поддерживает все способы установки, описанные в [официальной документации](https://docs.claude.com/en/docs/claude-code/discover-plugins).
 
-```bash
-/plugin marketplace add <автор>/cavemanov
-/plugin install cavemanov
+### Вариант 1 — GitHub shorthand (рекомендуется)
+
+В сессии Claude Code:
+
+```
+/plugin marketplace add zzvllvzz/cavemanov
+/plugin install cavemanov@cavemanov
 ```
 
-### Вариант 2: клонирование
+### Вариант 2 — Git URL (HTTPS)
 
-```bash
-git clone https://github.com/<автор>/cavemanov ~/.claude/plugins/cavemanov
+```
+/plugin marketplace add https://github.com/zzvllvzz/cavemanov.git
+/plugin install cavemanov@cavemanov
 ```
 
-Затем перезапустить Claude Code.
+### Вариант 3 — Git URL (SSH)
+
+```
+/plugin marketplace add git@github.com:zzvllvzz/cavemanov.git
+/plugin install cavemanov@cavemanov
+```
+
+### Вариант 4 — закрепиться на конкретной версии
+
+Через тег (после релиза):
+
+```
+/plugin marketplace add https://github.com/zzvllvzz/cavemanov.git#v1.0.0
+/plugin install cavemanov@cavemanov
+```
+
+### Вариант 5 — из CLI (вне сессии)
+
+```bash
+claude plugin marketplace add zzvllvzz/cavemanov
+claude plugin install cavemanov@cavemanov
+```
+
+С указанием [scope](https://docs.claude.com/en/docs/claude-code/settings#configuration-scopes) (`user` / `project` / `local`):
+
+```bash
+claude plugin install cavemanov@cavemanov --scope user
+```
+
+### Вариант 6 — локальный путь (разработка / форк)
+
+```bash
+git clone https://github.com/zzvllvzz/cavemanov.git
+```
+
+Внутри Claude Code:
+
+```
+/plugin marketplace add /абсолютный/путь/к/cavemanov
+/plugin install cavemanov@cavemanov
+```
+
+### Вариант 7 — `--plugin-dir` (без установки, для тестирования)
+
+```bash
+claude --plugin-dir /путь/к/cavemanov
+```
+
+Загружает плагин на одну сессию без копирования в кэш. Полезно для разработки и форков.
+
+### Вариант 8 — через `settings.json` для команды
+
+Чтобы все участники проекта получили плагин автоматически — добавь в `.claude/settings.json` репозитория:
+
+```json
+{
+  "extraKnownMarketplaces": {
+    "cavemanov": {
+      "source": {
+        "source": "github",
+        "repo": "zzvllvzz/cavemanov"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "cavemanov@cavemanov": true
+  }
+}
+```
+
+При первом доверии папке Claude Code предложит установить.
+
+### Вариант 9 — pre-seed для контейнеров / CI
+
+Pre-populate `CLAUDE_CODE_PLUGIN_SEED_DIR` на этапе сборки образа, чтобы плагин был доступен без сетевых запросов в рантайме. См. [официальную доку](https://docs.claude.com/en/docs/claude-code/plugin-marketplaces#pre-populate-plugins-for-containers).
+
+```bash
+CLAUDE_CODE_PLUGIN_CACHE_DIR=/opt/claude-seed claude plugin marketplace add zzvllvzz/cavemanov
+CLAUDE_CODE_PLUGIN_CACHE_DIR=/opt/claude-seed claude plugin install cavemanov@cavemanov
+# в рантайме:
+export CLAUDE_CODE_PLUGIN_SEED_DIR=/opt/claude-seed
+```
+
+### После установки
+
+```
+/reload-plugins
+```
+
+Или просто перезапустить Claude Code.
+
+### Обновление и удаление
+
+```
+/plugin marketplace update cavemanov     # обновить marketplace
+/plugin update cavemanov@cavemanov       # обновить плагин
+/plugin disable cavemanov@cavemanov      # выключить, не удаляя
+/plugin uninstall cavemanov@cavemanov    # удалить
+```
 
 ---
 
