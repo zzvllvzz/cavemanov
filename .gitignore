@@ -1,0 +1,21 @@
+# Local Claude Code settings (per-user permissions, not shared)
+.claude/settings.local.json
+
+# OS metadata
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Node (in case anyone ever adds tooling)
+node_modules/
+npm-debug.log*
+
+# Cavemanov runtime artifacts (should not exist in repo, but guard against accidental commits)
+.cavemanov-active
