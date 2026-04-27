@@ -13,26 +13,41 @@ try {
     exit 0
 }
 
-$Mode = ""
+$Raw = ""
 try {
-    $Raw = Get-Content -LiteralPath $Flag -TotalCount 1 -ErrorAction Stop
-    if ($null -ne $Raw) { $Mode = ([string]$Raw).Trim() }
+    $RawLine = Get-Content -LiteralPath $Flag -TotalCount 1 -ErrorAction Stop
+    if ($null -ne $RawLine) { $Raw = ([string]$RawLine).Trim() }
 } catch {
     exit 0
 }
 
-# Strip anything outside [a-z0-9-] — blocks terminal-escape and OSC hyperlink
+# Strip anything outside [a-z0-9|-] — blocks terminal-escape and OSC hyperlink
 # injection via the flag contents. Then whitelist-validate.
-$Mode = $Mode.ToLowerInvariant()
-$Mode = ($Mode -replace '[^a-z0-9-]', '')
+$Raw = $Raw.ToLowerInvariant()
+$Raw = ($Raw -replace '[^a-z0-9\|-]', '')
 
-$Valid = @('off','lite','full','ultra','commit','review','compress')
-if (-not ($Valid -contains $Mode)) { exit 0 }
+$Lang = ""
+$Mode = ""
+if ($Raw.Contains("|")) {
+    $Parts = $Raw.Split("|", 2)
+    $Lang = $Parts[0]
+    $Mode = $Parts[1]
+} else {
+    $Lang = "ru"
+    $Mode = $Raw
+}
+
+$ValidLangs = @('ru','kk')
+$ValidModes = @('off','lite','full','ultra','commit','review','compress')
+if (-not ($ValidLangs -contains $Lang)) { exit 0 }
+if (-not ($ValidModes -contains $Mode)) { exit 0 }
 
 $Esc = [char]27
-if ([string]::IsNullOrEmpty($Mode) -or $Mode -eq "full") {
-    [Console]::Write("${Esc}[38;5;172m[CAVEMANOV]${Esc}[0m")
+$LangSuffix = $Lang.ToUpperInvariant()
+$ModeSuffix = $Mode.ToUpperInvariant()
+
+if ($Mode -eq "full") {
+    [Console]::Write("${Esc}[38;5;172m[CAVEMANOV:$LangSuffix]${Esc}[0m")
 } else {
-    $Suffix = $Mode.ToUpperInvariant()
-    [Console]::Write("${Esc}[38;5;172m[CAVEMANOV:$Suffix]${Esc}[0m")
+    [Console]::Write("${Esc}[38;5;172m[CAVEMANOV:$LangSuffix:$ModeSuffix]${Esc}[0m")
 }

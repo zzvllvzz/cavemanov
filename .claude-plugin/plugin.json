@@ -1,7 +1,7 @@
 {
   "name": "cavemanov",
-  "version": "1.0.0",
-  "description": "Ультра-сжатый режим общения на русском. Сокращает ~65-75% токенов при сохранении полной технической точности. Пещерный режим для Claude Code.",
+  "version": "1.1.0",
+  "description": "Ультра-сжатый режим общения на русском и казахском (Қысқа сөйлесу режимі қазақша/орысша). Сокращает ~65-80% токенов при сохранении полной технической точности. Пещерный режим для Claude Code.",
   "author": {
     "name": "zzvllvzz",
     "url": "https://github.com/zzvllvzz"
@@ -12,6 +12,8 @@
   "keywords": [
     "russian",
     "русский",
+    "kazakh",
+    "қазақша",
     "compression",
     "сжатие",
     "tokens",
@@ -20,10 +22,12 @@
     "пещерный",
     "productivity",
     "ru",
+    "kk",
     "skill",
     "hooks",
     "output-style",
-    "terse"
+    "terse",
+    "multilingual"
   ],
   "hooks": {
     "SessionStart": [

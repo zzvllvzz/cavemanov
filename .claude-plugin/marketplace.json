@@ -5,15 +5,15 @@
     "url": "https://github.com/zzvllvzz"
   },
   "metadata": {
-    "description": "Ультра-сжатый режим общения на русском для Claude Code. Сокращает ~65-75% токенов при сохранении полной технической точности.",
-    "version": "1.0.0"
+    "description": "Ультра-сжатый режим общения на русском и казахском для Claude Code. Сокращает ~65-80% токенов при сохранении полной технической точности.",
+    "version": "1.1.0"
   },
   "plugins": [
     {
       "name": "cavemanov",
       "source": "./",
-      "description": "Говори как пещерный человек на русском. Сокращай ~65-75% токенов. Сохраняй всю техническую точность.",
-      "version": "1.0.0",
+      "description": "Сжимай ответы Claude на русском или казахском. -65-80% токенов. Техника целиком. /cavemanov или /cavemanov-kk.",
+      "version": "1.1.0",
       "author": {
         "name": "zzvllvzz",
         "url": "https://github.com/zzvllvzz"
@@ -25,20 +25,26 @@
       "tags": [
         "russian",
         "русский",
+        "kazakh",
+        "қазақша",
         "compression",
         "tokens",
         "caveman",
         "пещерный",
         "ru",
+        "kk",
+        "multilingual",
         "terse",
         "output-style"
       ],
       "keywords": [
         "russian",
+        "kazakh",
         "compression",
         "tokens",
         "caveman",
-        "productivity"
+        "productivity",
+        "multilingual"
       ]
     }
   ]

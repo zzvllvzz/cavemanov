@@ -8,6 +8,15 @@
 //      - ~/.config/cavemanov/config.json (macOS / Linux fallback)
 //      - %APPDATA%\cavemanov\config.json (Windows fallback)
 //   3. 'full'
+//
+// Resolution order for default language:
+//   1. CAVEMANOV_DEFAULT_LANG environment variable
+//   2. Config file defaultLang field
+//   3. 'ru'
+//
+// Flag-file format:
+//   - New: "lang|mode" (e.g. "ru|full", "kk|ultra")
+//   - Legacy: "mode" alone — treated as ru|<mode> for backward compatibility
 
 const fs = require('fs');
 const path = require('path');
@@ -17,6 +26,8 @@ const VALID_MODES = [
   'off', 'lite', 'full', 'ultra',
   'commit', 'review', 'compress'
 ];
+
+const VALID_LANGS = ['ru', 'kk'];
 
 function getConfigDir() {
   if (process.env.XDG_CONFIG_HOME) {
@@ -35,23 +46,46 @@ function getConfigPath() {
   return path.join(getConfigDir(), 'config.json');
 }
 
+function loadConfig() {
+  try {
+    const configPath = getConfigPath();
+    return JSON.parse(fs.readFileSync(configPath, 'utf8'));
+  } catch (e) {
+    return {};
+  }
+}
+
 function getDefaultMode() {
   const envMode = process.env.CAVEMANOV_DEFAULT_MODE;
   if (envMode && VALID_MODES.includes(envMode.toLowerCase())) {
     return envMode.toLowerCase();
   }
 
-  try {
-    const configPath = getConfigPath();
-    const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-    if (config.defaultMode && VALID_MODES.includes(config.defaultMode.toLowerCase())) {
-      return config.defaultMode.toLowerCase();
-    }
-  } catch (e) {
-    // Config file doesn't exist or is invalid — fall through
+  const config = loadConfig();
+  if (config.defaultMode && VALID_MODES.includes(String(config.defaultMode).toLowerCase())) {
+    return String(config.defaultMode).toLowerCase();
   }
 
   return 'full';
+}
+
+function getDefaultLang() {
+  const envLang = process.env.CAVEMANOV_DEFAULT_LANG;
+  if (envLang && VALID_LANGS.includes(envLang.toLowerCase())) {
+    return envLang.toLowerCase();
+  }
+
+  const config = loadConfig();
+  if (config.defaultLang && VALID_LANGS.includes(String(config.defaultLang).toLowerCase())) {
+    return String(config.defaultLang).toLowerCase();
+  }
+
+  return 'ru';
+}
+
+// Serialize lang+mode for the flag file. Format: "lang|mode".
+function serializeFlag(lang, mode) {
+  return `${lang}|${mode}`;
 }
 
 // Symlink-safe flag file write.
@@ -96,6 +130,12 @@ function safeWriteFlag(flagPath, content) {
 // Symlink-safe, size-capped, whitelist-validated flag file read.
 // Symmetric with safeWriteFlag: refuses symlinks at the target, caps the read,
 // and rejects anything that isn't a known mode. Returns null on any anomaly.
+//
+// Returns either:
+//   - { lang, mode } object on success
+//   - null on any anomaly
+//
+// Accepts both new format ("lang|mode") and legacy format ("mode" alone, → ru).
 const MAX_FLAG_BYTES = 64;
 
 function readFlag(flagPath) {
@@ -123,11 +163,34 @@ function readFlag(flagPath) {
     }
 
     const raw = out.trim().toLowerCase();
-    if (!VALID_MODES.includes(raw)) return null;
-    return raw;
+
+    // New format: "lang|mode"
+    if (raw.includes('|')) {
+      const [lang, mode] = raw.split('|', 2);
+      if (!VALID_LANGS.includes(lang)) return null;
+      if (!VALID_MODES.includes(mode)) return null;
+      return { lang, mode };
+    }
+
+    // Legacy format: "mode" alone — assume ru
+    if (VALID_MODES.includes(raw)) {
+      return { lang: 'ru', mode: raw };
+    }
+
+    return null;
   } catch (e) {
     return null;
   }
 }
 
-module.exports = { getDefaultMode, getConfigDir, getConfigPath, VALID_MODES, safeWriteFlag, readFlag };
+module.exports = {
+  getDefaultMode,
+  getDefaultLang,
+  getConfigDir,
+  getConfigPath,
+  VALID_MODES,
+  VALID_LANGS,
+  safeWriteFlag,
+  readFlag,
+  serializeFlag,
+};

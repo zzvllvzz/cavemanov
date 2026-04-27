@@ -2,15 +2,19 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin-blueviolet)](https://www.anthropic.com/claude-code)
-[![Language: Russian](https://img.shields.io/badge/lang-русский-red)](#)
+[![Languages](https://img.shields.io/badge/языки-русский%20%7C%20қазақша-red)](#)
 [![Token saving](https://img.shields.io/badge/токены-−65--90%25-brightgreen)](#пример)
-[![Version](https://img.shields.io/badge/version-1.0.0-blue)](.claude-plugin/plugin.json)
+[![Version](https://img.shields.io/badge/version-1.1.0-blue)](.claude-plugin/plugin.json)
 
-**Теги:** `claude-code` · `claude-code-plugin` · `russian` · `русский` · `compression` · `сжатие` · `tokens` · `токены` · `caveman` · `пещерный` · `productivity` · `output-style` · `terse`
+**Теги:** `claude-code` · `claude-code-plugin` · `russian` · `русский` · `kazakh` · `қазақша` · `compression` · `сжатие` · `tokens` · `токены` · `caveman` · `пещерный` · `productivity` · `output-style` · `terse` · `multilingual`
 
-**Ультра-сжатый режим общения на русском для Claude Code.** Говори как умный пещерный человек. Сокращай вывод на 65–75% без потери технической точности.
+**Ультра-сжатый режим общения на русском и казахском для Claude Code.** Говори как умный пещерный человек. Сокращай вывод на 65–80% без потери технической точности.
 
-Порт проекта [caveman](https://github.com/JuliusBrussee/caveman) от Julius Brussee на русский язык.
+Поддерживаются два языка: **русский** (`/cavemanov`) и **казахский** (`/cavemanov-kk`). Каждый использует РОДНЫЕ приёмы своего языка, не кальку с английского.
+
+Порт проекта [caveman](https://github.com/JuliusBrussee/caveman) от Julius Brussee на русский язык + казахская адаптация.
+
+> ⚠️ **Казахская версия — draft.** Грамматика проверена в скелете, но финальные формулировки нуждаются в ревью носителем. Если ты казахоговорящий разработчик — open an issue, помоги довести до прода. См. [skills/cavemanov-kk/SKILL.md](skills/cavemanov-kk/SKILL.md).
 
 ---
 
@@ -156,31 +160,52 @@ export CLAUDE_CODE_PLUGIN_SEED_DIR=/opt/claude-seed
 
 Любое из:
 
-- Слэш-команда: `/cavemanov`
+- Слэш-команда: `/cavemanov` (русский) или `/cavemanov-kk` (казахский)
 - Фраза на русском: `включи пещерный`, `пещерный режим`, `говори как пещерный`, `меньше токенов`, `будь краток`, `экономь токены`
+- Фраза на казахском: `қазақша қысқарт`, `пещерный режим қазақша`, `токен үнемде`, `қысқа сөйле`
 - Фраза на английском: `activate cavemanov`, `cavemanov mode`, `turn on cavemanov`
 
-### Переключение уровня
+### Переключение языка/уровня
 
 ```
-/cavemanov lite
-/cavemanov full
-/cavemanov ultra
+/cavemanov              # русский, уровень full
+/cavemanov ultra        # русский, уровень ultra
+/cavemanov kk           # казахский, уровень full
+/cavemanov kk ultra     # казахский, уровень ultra
+/cavemanov-kk lite      # казахский, уровень lite (шорткат)
 ```
+
+Аргументы команды `/cavemanov` можно указывать в любом порядке: `/cavemanov full kk` = `/cavemanov kk full`.
 
 ### Деактивация
 
-- `стоп пещерный`
-- `выключи пещерный`
-- `обычный режим`
-- `нормальный режим`
-- `/cavemanov off`
+- Русский: `стоп пещерный`, `выключи пещерный`, `обычный режим`, `нормальный режим`
+- Казахский: `қалыпты режим`, `пещерный өшір`
+- Английский: `stop cavemanov`, `normal mode`
+- Команда: `/cavemanov off`
 
 ### Отдельные режимы
 
 ```
 /cavemanov-commit     # сгенерировать краткий коммит
 /cavemanov-review     # однострочный code review
+```
+
+### Дефолтный язык
+
+Резолвится в порядке:
+
+1. `CAVEMANOV_DEFAULT_LANG` env (`ru` / `kk`)
+2. `defaultLang` в `config.json`
+3. `ru` (хардкод)
+
+Пример `~/.config/cavemanov/config.json`:
+
+```json
+{
+  "defaultMode": "ultra",
+  "defaultLang": "kk"
+}
 ```
 
 ---
@@ -212,6 +237,24 @@ export CLAUDE_CODE_PLUGIN_SEED_DIR=/opt/claude-seed
 > Inline obj → новая ссылка → ререндер. `useMemo`.
 
 ≈ 18 токенов. **Экономия ~90%.**
+
+### Пример на казахском (draft, [VERIFY])
+
+**Тот же вопрос на казахском:** «React компоненті неге қайта рендерленеді?»
+
+**Cavemanov-kk full:**
+
+> Компонент — әр рендерде жаңа сілтеме. Inline объект = жаңа сілтеме = қайта рендер. `useMemo`-ға орап ал.
+
+**Cavemanov-kk ultra:**
+
+> Inline obj → жаңа сілт → ререндер. `useMemo`.
+
+Что использует:
+- **Тире** вместо «болып табылады»
+- **Көсемше -ып** для деепричастных оборотов
+- **Көмектес септігі** (`-мен/-бен/-пен`) вместо «арқылы»
+- **Бұйрық рай** (императив на «сен»: `орап ал`)
 
 ---
 
@@ -245,18 +288,20 @@ cavemanov/
 │   ├── plugin.json              # манифест плагина
 │   └── marketplace.json         # описание для Claude Code marketplace
 ├── skills/
-│   ├── cavemanov/SKILL.md       # основные правила пещерного
+│   ├── cavemanov/SKILL.md       # русские правила пещерного (default)
+│   ├── cavemanov-kk/SKILL.md    # казахские правила (draft, нужен ревью носителя)
 │   ├── cavemanov-commit/SKILL.md
 │   └── cavemanov-review/SKILL.md
 ├── commands/
-│   ├── cavemanov.toml           # /cavemanov
+│   ├── cavemanov.toml           # /cavemanov [ru|kk] [lite|full|ultra]
+│   ├── cavemanov-kk.toml        # /cavemanov-kk (шорткат для казахского)
 │   ├── cavemanov-commit.toml    # /cavemanov-commit
 │   └── cavemanov-review.toml    # /cavemanov-review
 ├── hooks/
 │   ├── cavemanov-activate.js        # SessionStart
 │   ├── cavemanov-mode-tracker.js    # UserPromptSubmit
-│   ├── cavemanov-config.js          # resolver режима + безопасные I/O
-│   ├── cavemanov-statusline.sh      # бейдж [CAVEMANOV] для bash
+│   ├── cavemanov-config.js          # resolver языка/режима + безопасные I/O
+│   ├── cavemanov-statusline.sh      # бейдж [CAVEMANOV:RU] / [CAVEMANOV:KK:ULTRA]
 │   ├── cavemanov-statusline.ps1     # бейдж для PowerShell
 │   └── package.json
 └── README.md
